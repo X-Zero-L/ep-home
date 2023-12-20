@@ -47,6 +47,7 @@ import { invoke } from "@tauri-apps/api";
 import dayjs from 'dayjs'
 import { el } from "element-plus/es/locale";
 import { ref } from 'vue';
+import { ElMessage } from 'element-plus';
 
 const start_day = ref('')
 const end_day = ref('')
@@ -75,10 +76,49 @@ const get_usage = () => {
     let start = is_all_usage.value ? 'all' : is_raw_usage.value ? 'raw' : dayjs(start_day.value).format('YYYY-MM-DD')
     let end = is_all_usage.value ? null : is_raw_usage.value ? null : dayjs(end_day.value).format('YYYY-MM-DD')
 
+    if (start !== 'all' && start !== 'raw') {
+        if (dayjs().hour() >= 8) {
+            if (dayjs(start).isAfter(dayjs().subtract(1, 'day'))) {
+                ElMessage({
+                    message: '起始日期不合法, 用量数据更新时间为每天8点',
+                    type: 'error'
+                })
+                return
+            }
+        }
+        else {
+            if (dayjs(start).isAfter(dayjs().subtract(2, 'day'))) {
+                ElMessage({
+                    message: '起始日期不合法, 用量数据更新时间为每天8点',
+                    type: 'error'
+                })
+                return
+            }
+        }
+        // 判断起始日期是否大于结束日期
+        if (dayjs(start).isAfter(dayjs(end))) {
+            ElMessage({
+                message: '起始日期不得大于结束日期',
+                type: 'error'
+            })
+            return
+        }
+    }
+
+    ElMessage({
+        message: '正在查询用量数据',
+        type: 'info',
+        duration: 500
+    })
 
     invoke('get_usage', { start, end })
     .then((response) => {
         handleUsageResponse(response);
+        ElMessage({
+            message: '用量数据查询成功',
+            type: 'success',
+            duration: 500
+        })
     })
     .catch((error) => {
         console.error('Error occurred while fetching usage:', error);
