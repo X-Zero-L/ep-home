@@ -1,6 +1,6 @@
 <template>
   <el-menu
-    default-active="2"
+    default-active="3"
     class="el-menu-vertical-demo"
     :collapse="isCollapse"
     @open="handleOpen"
@@ -47,6 +47,7 @@ import {
   Tickets
   
 } from '@element-plus/icons-vue'
+import { invoke } from "@tauri-apps/api";
 
 // 事件类型: onReceive
 interface EmitType {
@@ -68,6 +69,10 @@ const handleClose = (key: string, keyPath: string[]) => {
 
 const goto_setting = () => {
   console.log('goto_setting')
+  invoke('greet', { name: 'World' })
+    .then((response) => {
+        console.log(response);
+    })
   emit('onReceive', 'setting')
 }
 

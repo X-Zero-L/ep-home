@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const page = ref('home');
+const page = ref('usage');
 
 const onReceive = (params: string) => {
   console.log('onReceive', params);
