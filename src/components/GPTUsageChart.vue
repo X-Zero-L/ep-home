@@ -117,6 +117,10 @@ watch(() => props.series_data, (newVal, oldVal) => {
     chart.setOption(option_ref.value);
 });
 
+// 监听窗口变化
+window.addEventListener('resize', () => {
+    chart.resize();
+});
 
 </script>
 
