@@ -12,7 +12,7 @@ pub mod epapi;
 async fn main() {
   tauri::async_runtime::set(tokio::runtime::Handle::current());
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![greet, get_usage])
+    .invoke_handler(tauri::generate_handler![greet, get_usage, get_monthly_usage, get_daily_usage])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
@@ -26,4 +26,14 @@ async fn greet(name: String) -> Result<String, ()> {
 #[tauri::command]
 async fn get_usage(start: String, end: Option<String>) -> Result<HashMap<String, Value>, ()> {
     epapi::get_usage(start, end).await
+}
+
+#[tauri::command]
+async fn get_monthly_usage(month: String) -> Result<HashMap<String, Value>, ()> {
+    epapi::get_monthly_usage(month).await
+}
+
+#[tauri::command]
+async fn get_daily_usage(day: String) -> Result<HashMap<String, Value>, ()> {
+    epapi::get_daily_usage(day).await
 }
