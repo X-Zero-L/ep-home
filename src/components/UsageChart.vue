@@ -70,7 +70,7 @@ const get_daily_usage = async () => {
     )
     let day_str = dayjs(day.value).format('YYYY-MM-DD')
     const res = await invoke("get_daily_usage", { day: day_str});
-    handleUsageResponse(res)
+    await handleUsageResponse(res)
     ElMessage(
         {
             message: '查询成功',
@@ -97,7 +97,7 @@ const get_monthly_usage = async () => {
     )
     let month_str = dayjs(month.value).format('YYYY-MM')
     let res = await invoke("get_monthly_usage", { month: month_str});
-    res = handleUsageResponse(res)
+    res = await handleUsageResponse(res)
     ElMessage(
         {
             message: '查询成功',
@@ -109,7 +109,7 @@ const get_monthly_usage = async () => {
 };
 
 // 处理用量数据
-const handleUsageResponse = (response: any) => {
+const handleUsageResponse = async (response: any) => {
     if (typeof response === 'object' && response !== null && 'data' in response && Array.isArray(response['data'])) {
         let data = response['data']
         let names: any[] = []
@@ -134,10 +134,8 @@ const handleUsageResponse = (response: any) => {
                 }
             }
         }
-        /*
-        接下来把series_data转换成echarts的series格式
-        */
         models_data.value = []
+        await Promise.resolve()
         for (let key in series_data) {
             let series = []
             for (let uname in series_data[key]) {
